@@ -1,15 +1,21 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Testing Vue with GH Pages"/>
+  <VocabIO/>
+  <VocabOptions/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import VocabIO from './components/VocabIO.vue'
+import VocabOptions from './components/VocabOptions.vue'
 
 export default {
   name: 'App',
+  mounted () {
+    document.title = "JSLBot";
+  },
   components: {
-    HelloWorld
+    VocabIO,
+    VocabOptions
   }
 }
 </script>
