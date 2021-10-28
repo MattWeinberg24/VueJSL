@@ -1,24 +1,7 @@
-# vue-jsl
+# VueJSL
 
-## Project setup
-```
-npm install
-```
+A migration of [JSLBot](https://github.com/MattWeinberg24/JSLbot) to [Vue.js](https://github.com/vuejs/vue)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Daily Log
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+**10/28/2021:** Created Vue Project, set up compatibility with GitHub Pages website
