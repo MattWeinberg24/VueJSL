@@ -1,12 +1,15 @@
 <template>
     <div class="vocabio">
-        <p>vocabio</p>
+        <div v-for="word in words.nominals" v-bind:key="word">{{word.japanese}}</div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'VocabIO'
+    name: 'VocabIO',
+    props: {
+        words: Object
+    }
 }
 </script>
 

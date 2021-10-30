@@ -1,16 +1,22 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <VocabIO/>
+  <VocabIO :words="words"/>
   <VocabOptions/>
 </template>
 
 <script>
+import wordJSON from './data/words.json'
 import VocabIO from './components/VocabIO.vue'
 import VocabOptions from './components/VocabOptions.vue'
 
 export default {
   name: 'App',
-  mounted () {
+  data() {
+    return {
+      words: wordJSON
+    }
+  },
+  mounted() {
     document.title = "JSLBot";
   },
   components: {
