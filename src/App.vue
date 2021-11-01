@@ -30,7 +30,7 @@ export default {
   methods: {
     setupKuroshiro(){
       this.$loadScript('https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js').then(() => {
-        let analyzer = new KuromojiAnalyzer({ dictPath: "/dict/" });
+        let analyzer = new KuromojiAnalyzer({ dictPath: "dict/" });
         this.$loadScript('https://unpkg.com/kuroshiro@1.1.2/dist/kuroshiro.min.js').then(() => {
           this.kuroshiro = new Kuroshiro();
           this.kuroshiro.init(analyzer).then(() => {
