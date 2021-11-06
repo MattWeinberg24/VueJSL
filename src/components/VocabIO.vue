@@ -1,6 +1,12 @@
 <template>
-    <div class="vocabio">
-        <div v-for="word in words" v-bind:key="word">{{word}}</div>
+    <div id="vocab-io">
+        <h2 id="word"></h2>
+        <form id="inp" autocomplete="off">
+            <input type="text" id="inpbox">
+            <button id="continue-button">Submit</button>
+        </form>
+        <h2 id="result"></h2>
+        <h2 id="correct-answers"></h2>
     </div>
 </template>
 
@@ -8,13 +14,13 @@
 export default {
     name: 'VocabIO',
     props: {
-        words: Object
+        words: Array
     }
 }
 </script>
 
 <style >
-    .vocabio {
+    .vocab-io {
         color: red;
     }
 </style>
