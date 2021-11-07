@@ -1,7 +1,10 @@
 <template>
+<h1 v-show="!renderApp">Loading...</h1>
+<div id="yeah" v-show="renderApp" :key="renderApp">
   <VocabIO :words="unusedWords"/>
-  <VocabOptions v-on:resetApp="resetApp()" VocabOptions/>
+  <VocabOptions v-on:resetApp="resetApp()"/>
   <VocabTable :words="unusedWords"/>
+</div>
 </template>
 
 <script>
@@ -15,6 +18,7 @@ export default {
   name: 'App',
   data() {
     return {
+      renderApp: false,
       unusedWords: [], 
       kuroshiro: null, //kuroshiro object that is initialized on page load
       lessonStart: "1A",
@@ -116,7 +120,7 @@ export default {
     let t1 = new Date(); //time of Kuroshiro initialization start
     this.loadExternalScripts().then(this.initializeKuroshiro).then(this.generateTranslations).then(() => {
       console.log("Kuroshiro Initialized in " + (((new Date()) - t1) / 1000) + " seconds"); //log initializaiton time
-
+      this.renderApp = true;
     });
   }
 }

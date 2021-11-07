@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style >
+<style scoped>
     .vocab-io {
         color: red;
     }
