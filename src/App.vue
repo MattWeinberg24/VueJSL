@@ -13,13 +13,16 @@ import wordJSON from './assets/words.json';
 import VocabIO from './components/VocabIO.vue';
 import VocabOptions from './components/VocabOptions.vue';
 import VocabTable from './components/VocabTable.vue';
+import { compareLesson, nipponToJSL } from './utilities';
 
 export default {
   name: 'App',
   data() {
     return {
-      renderApp: false,
+      renderApp: false, //true when app is ready: triggers UI elements to load when true
       unusedWords: [], 
+      reviewWords: [],
+      masteredWords: [],
       kuroshiro: null, //kuroshiro object that is initialized on page load
       lessonStart: "1A",
       lessonEnd: "15A"
@@ -28,7 +31,7 @@ export default {
   methods: {
   /**
    * Loads external js libraries using vue-plugin-load-script
-   * TODO: HANDLE BLOCKED SCRIPTS 
+   * @TODO: HANDLE BLOCKED SCRIPTS 
    * @returns {Promise} Script loading processes
    */
     loadExternalScripts() {
@@ -56,7 +59,7 @@ export default {
           if (word.hasOwnProperty("kana")){ //if kana is overridden in words.json
               word.romazi = [];
               word.kana.forEach(k => {
-                  word.romazi.push(this.nipponToJSL(Kuroshiro.Util.kanaToRomaji(k,"nippon")));
+                  word.romazi.push(nipponToJSL(Kuroshiro.Util.kanaToRomaji(k,"nippon")));
               });
           }
           else { //if kana needs to be generated
@@ -64,7 +67,7 @@ export default {
               word.romazi = [];
               word.japanese.forEach((j,i) => {
                   promiseArray.push(this.kuroshiro.convert(j, {to: "hiragana"}).then(k => {
-                      word.romazi.push(this.nipponToJSL(Kuroshiro.Util.kanaToRomaji(k,"nippon")));
+                      word.romazi.push(nipponToJSL(Kuroshiro.Util.kanaToRomaji(k,"nippon")));
                       word.kana.push(k);
                   }));
               })
@@ -74,36 +77,11 @@ export default {
       return Promise.all(promiseArray);
     },
 
-   /**
-    * @param {string} a The first lesson string 
-    * @param {string} b The second lesson string
-    * @returns {boolean} True if a is higher than b, false otherwise
-    */
-    compareLesson(a,b){
-      var aSplit = a.split(/(\d+)/); //splits between letters and numbers
-      var bSplit = b.split(/(\d+)/);
-      if (aSplit[1] == bSplit[1]){ //if both rows have the same number lesson, sort by letter
-          return aSplit[2] > bSplit[2];
-      }
-      else { //otherwise sort by number
-          return Number(aSplit[1]) > Number(bSplit[1]);
-      }
-    },
-
-   /**
-    * Converts Nippon romazi to JSL romazi
-    * @param {string} nippon Nippon romazi to convert
-    * @returns {string} The resulting JSL romazi
-    */
-    nipponToJSL(nippon) {
-        return nippon.replace("î","ii").replace("ô","oo").replace("ê","ee").replace("â","aa").replace("ou","oo").replace("ei","ee"); 
-    },
-
     resetApp(){
       let w = wordJSON;
       [].concat(w.nominals,w.verbals,w.na_nominals,
         w.adjectivals,w.suru_verbals, w.modifiers,w.greetings).forEach((word,i) => {
-        if (!this.compareLesson(this.lessonStart, word.lesson) && !(this.compareLesson(word.lesson, this.lessonEnd))){ //if start <= lesson <= end
+        if (!compareLesson(this.lessonStart, word.lesson) && !(compareLesson(word.lesson, this.lessonEnd))){ //if start <= lesson <= end
           this.unusedWords.push(word);
         }
       });
