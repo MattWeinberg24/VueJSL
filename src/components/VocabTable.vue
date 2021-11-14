@@ -1,5 +1,5 @@
 <template>
-    <table id="vocab-table" v-if="words.length > 0 && words[0].hasOwnProperty('romazi')">
+    <table id="vocab-table" v-if="unusedWords.length > 0 && unusedWords[0].hasOwnProperty('romazi')">
         <thead>
             <tr>
                 <th @click="sortTable(0)" :class="{upArrow: col == 0 && asc, downArrow: col == 0 && !asc}">English</th>
@@ -23,11 +23,14 @@
 
 <script>
 import { compareLesson } from '../utilities';
+import Kuroshiro from "kuroshiro";
 
 export default {
     name: 'VocabTable',
     props: {
-        words: Array
+        unusedWords: Array,
+        reviewWords: Array,
+        masteredWords: Array
     },
     data() {
         return {
@@ -37,12 +40,12 @@ export default {
     },
     computed: {
         /**
-         * Sorts the words based on the selected column and current ascending/descending choice
+         * Sorts the unusedWords based on the selected column and current ascending/descending choice
          * @returns {Array} The sorted word object array 
          */
         sortedWords() {
             let dirModifier = this.asc ? 1 : -1;
-            let sortedWords = this.words.sort((a,b) => {
+            let sortedWords = this.unusedWords.sort((a,b) => {
                 switch (this.col) {
                     case 0: return a.english[0] > b.english[0] ? (1*dirModifier) : (-1*dirModifier);
                     case 1: return a.romazi[0] > b.romazi[0] ? (1*dirModifier) : (-1*dirModifier);

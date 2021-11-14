@@ -1,17 +1,16 @@
 <template>
 <h1 v-show="!renderApp">Loading...</h1>
-<div id="yeah" v-show="renderApp" :key="renderApp">
-  <VocabIO :words="unusedWords"/>
-  <VocabOptions v-on:resetApp="resetApp()"/>
-  <VocabTable :words="unusedWords"/>
+<div v-show="renderApp" :key="renderApp">
+  <Vocab :unusedWords="unusedWords" :reviewWords="reviewWords" v-on:lessonChange="resetApp($event.start,$event.end)"/>
+  <VocabTable :unusedWords="unusedWords" :reviewWords="reviewWords" :masteredWords="masteredWords"/>
 </div>
 </template>
 
 <script>
-//import { loadScript } from "vue-plugin-load-script";
+import Kuroshiro from "kuroshiro";
+import KuromojiAnalyzer from "kuroshiro-analyzer-kuromoji";
 import wordJSON from './assets/words.json';
-import VocabIO from './components/VocabIO.vue';
-import VocabOptions from './components/VocabOptions.vue';
+import Vocab from './components/Vocab.vue';
 import VocabTable from './components/VocabTable.vue';
 import { compareLesson, nipponToJSL } from './utilities';
 
@@ -24,8 +23,6 @@ export default {
       reviewWords: [],
       masteredWords: [],
       kuroshiro: null, //kuroshiro object that is initialized on page load
-      lessonStart: "1A",
-      lessonEnd: "15A"
     }
   },
   methods: {
@@ -34,12 +31,12 @@ export default {
    * @TODO: HANDLE BLOCKED SCRIPTS 
    * @returns {Promise} Script loading processes
    */
-    loadExternalScripts() {
-      var promiseArray = [];
-      promiseArray.push(this.$loadScript('https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js'));
-      promiseArray.push(this.$loadScript('https://unpkg.com/kuroshiro@1.1.2/dist/kuroshiro.min.js'));
-      return Promise.all(promiseArray);
-    },
+    // loadExternalScripts() {
+    //   var promiseArray = [];
+    //   promiseArray.push(this.$loadScript('https://unpkg.com/kuroshiro-analyzer-kuromoji@1.1.0/dist/kuroshiro-analyzer-kuromoji.min.js'));
+    //   promiseArray.push(this.$loadScript('https://unpkg.com/kuroshiro@1.1.2/dist/kuroshiro.min.js'));
+    //   return Promise.all(promiseArray);
+    // },
   /**
    * Sets up the Kuroshiro library with the dictionary files. Used for kanji-kana translation
    * @returns {Promise} Kuroshiro initialization process
@@ -77,26 +74,26 @@ export default {
       return Promise.all(promiseArray);
     },
 
-    resetApp(){
+    resetApp(lessonStart, lessonEnd){
+      this.unusedWords = [];
       let w = wordJSON;
       [].concat(w.nominals,w.verbals,w.na_nominals,
         w.adjectivals,w.suru_verbals, w.modifiers,w.greetings).forEach((word,i) => {
-        if (!compareLesson(this.lessonStart, word.lesson) && !(compareLesson(word.lesson, this.lessonEnd))){ //if start <= lesson <= end
+        if (!compareLesson(lessonStart, word.lesson) && !(compareLesson(word.lesson, lessonEnd))){ //if start <= lesson <= end
           this.unusedWords.push(word);
         }
       });
     }
   },
   components: {
-    VocabIO,
-    VocabOptions,
+    Vocab,
     VocabTable
   },
   mounted() {
     document.title = "JSLBot";
-    this.resetApp();
+    this.resetApp("1A","15A");
     let t1 = new Date(); //time of Kuroshiro initialization start
-    this.loadExternalScripts().then(this.initializeKuroshiro).then(this.generateTranslations).then(() => {
+    this.initializeKuroshiro().then(this.generateTranslations).then(() => {
       console.log("Kuroshiro Initialized in " + (((new Date()) - t1) / 1000) + " seconds"); //log initializaiton time
       this.renderApp = true;
     });

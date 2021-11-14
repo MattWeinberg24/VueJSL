@@ -10,13 +10,14 @@ export function nipponToJSL(nippon) {
 /**
  * Finds the highest lesson of any kanji within a single word
  * @param {string} word The kanji word to process
+ * @param {Map} kanjiMap A map of kanji to their respective JWL lesson
  * @returns {string} The maximum lesson of all the kanji in the word (1A if all Kana, 100A if Kanji not in data)
  */
-export function maxLesson(word){
-    var max = "1A";
-    for (var c of word){
+export function maxLesson(word, kanjiMap){
+    let max = "1A";
+    for (let c of word){
         if (Kuroshiro.Util.isKanji(c)){ //skip if not kanji
-            var l = kanji.get(c);
+            let l = kanjiMap.get(c);
             if (l == undefined){ //kanji is not learned if not in data
                 return "100A"; //simulates a kanji being "too hard"
             }
@@ -34,8 +35,8 @@ export function maxLesson(word){
   * @returns {boolean} True if a is higher than b, false otherwise
   */
 export function compareLesson(a,b){
-    var aSplit = a.split(/(\d+)/); //splits between letters and numbers
-    var bSplit = b.split(/(\d+)/);
+    let aSplit = a.split(/(\d+)/); //splits between letters and numbers
+    let bSplit = b.split(/(\d+)/);
     if (aSplit[1] == bSplit[1]){ //if both rows have the same number lesson, sort by letter
         return aSplit[2] > bSplit[2];
     }
@@ -49,12 +50,12 @@ export function compareLesson(a,b){
  * @returns One lesson above the parameter
  */
 export function incrementLesson(l){
-    var split = l.split(/(\d+)/);
+    let split = l.split(/(\d+)/);
     if (split[2] == "A"){ //if parameter is an A Lesson
         return split[1] + "B"; //replace A with B
     }
     else {
-        var num = Number(split[1]) + 1; //add 1 to the lesson number
+        let num = Number(split[1]) + 1; //add 1 to the lesson number
         return num.toString() + "A";  //replace B with A
     }
 }
