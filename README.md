@@ -10,6 +10,7 @@ Uses [kuroshiro](https://github.com/hexenq/kuroshiro) with [kuroshiro-analyzer-k
 
 |Date |Progress  |
 |:--- |:--- |
+|**11/15/2021:**| Features about on par with JSLBot  |
 |**11/14/2021:**| Reimplemented various features involving input/output. Used module imports instead of a plugin for loading external libraries into Vue  |
 |**11/11/2021:**| Reimplemented table sorting. Moved utility functions to separate module instead of including them in the components directly. |
 |**11/07/2021:**| Reimplemented basic table (no sorting) |
