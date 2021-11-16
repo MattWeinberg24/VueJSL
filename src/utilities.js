@@ -1,3 +1,5 @@
+import Kuroshiro from "kuroshiro";
+
 /**
  * Converts Nippon romazi to JSL romazi
  * @param {string} nippon Nippon romazi to convert

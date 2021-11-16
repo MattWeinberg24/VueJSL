@@ -1,8 +1,14 @@
 <template>
 <h1 v-show="!renderApp">Loading...</h1>
 <div v-show="renderApp" :key="renderApp">
-  <Vocab :unusedWords="unusedWords" :reviewWords="reviewWords" v-on:lessonChange="resetApp($event.start,$event.end)"/>
-  <VocabTable :unusedWords="unusedWords" :reviewWords="reviewWords" :masteredWords="masteredWords"/>
+  <Vocab :unusedWords="unusedWords" 
+         :reviewWords="reviewWords" 
+         :resetToggle="resetToggle"
+         v-on:lessonChange="resetApp"
+         v-on:wordShift="moveWord"/>
+  <VocabTable :unusedWords="unusedWords" 
+              :reviewWords="reviewWords" 
+              :masteredWords="masteredWords"/>
 </div>
 </template>
 
@@ -19,6 +25,7 @@ export default {
   data() {
     return {
       renderApp: false, //true when app is ready: triggers UI elements to load when true
+      resetToggle: false,
       unusedWords: [], 
       reviewWords: [],
       masteredWords: [],
@@ -73,9 +80,39 @@ export default {
       
       return Promise.all(promiseArray);
     },
+    moveWord(word, direction) {
+      let i = -1;
+      switch (direction) {
+        case "u2m": {
+          i = this.unusedWords.indexOf(word);
+          this.unusedWords.splice(i,1);
+          this.masteredWords.push(word);
+          break;
+        }
+        case "r2u": {
+          i = this.reviewWords.indexOf(word);
+          this.reviewWords.splice(i,1);
+          this.unusedWords.push(word);
+          break;
+        }
+        case "u2r": {
+          i = this.unusedWords.indexOf(word);
+          this.unusedWords.splice(i,1);
+          this.reviewWords.push(word);
+          break;
+        }
+        default: {
+          console.log(word);
+          console.error("Direction '" + direction + "' does not exist");
+          break;
+        }
+      }
+    },
 
     resetApp(lessonStart, lessonEnd){
       this.unusedWords = [];
+      this.reviewWords = [];
+      this.masteredWords = [];
       let w = wordJSON;
       [].concat(w.nominals,w.verbals,w.na_nominals,
         w.adjectivals,w.suru_verbals, w.modifiers,w.greetings).forEach((word,i) => {
@@ -83,6 +120,7 @@ export default {
           this.unusedWords.push(word);
         }
       });
+      this.resetToggle = !this.resetToggle;
     }
   },
   components: {

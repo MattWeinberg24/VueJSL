@@ -1,5 +1,5 @@
 <template>
-    <table id="vocab-table" v-if="unusedWords.length > 0 && unusedWords[0].hasOwnProperty('romazi')">
+    <table id="vocab-table" v-if="renderable()">
         <thead>
             <tr>
                 <th @click="sortTable(0)" :class="{upArrow: col == 0 && asc, downArrow: col == 0 && !asc}">English</th>
@@ -10,7 +10,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="word in sortedWords" v-bind:key="word">
+            <tr v-for="word in sortedWords" v-bind:key="word" :class="{mastered: masteredWords.includes(word), review: reviewWords.includes(word)}">
                 <td>{{word.english.join(", ")}}</td>
                 <td>{{word.romazi.join("\n")}}</td>
                 <td :colspan="tableKanji(word) ? 1 : 2">{{word.kana.join("\n")}}</td>
@@ -40,23 +40,12 @@ export default {
     },
     computed: {
         /**
-         * Sorts the unusedWords based on the selected column and current ascending/descending choice
-         * @returns {Array} The sorted word object array 
+         * Combines the sorts of each of the three word groups 
+         * @returns {Array} The display-ordered words
          */
         sortedWords() {
-            let dirModifier = this.asc ? 1 : -1;
-            let sortedWords = this.unusedWords.sort((a,b) => {
-                switch (this.col) {
-                    case 0: return a.english[0] > b.english[0] ? (1*dirModifier) : (-1*dirModifier);
-                    case 1: return a.romazi[0] > b.romazi[0] ? (1*dirModifier) : (-1*dirModifier);
-                    case 2: return a.kana[0] > b.kana[0] ? (1*dirModifier) : (-1*dirModifier);
-                    case 3: return a.japanese[0] > b.japanese[0] ? (1*dirModifier) : (-1*dirModifier);
-                    case 4: return compareLesson(a.lesson, b.lesson) ? (1*dirModifier) : (-1*dirModifier);
-                    default: return true;
-                }
-            });
-            return sortedWords;
-        }
+            return this.sortWords(this.reviewWords).concat(this.sortWords(this.unusedWords), this.sortWords(this.masteredWords));
+        }   
     },
     methods: {
         /**
@@ -96,6 +85,32 @@ export default {
                 this.col = col;
                 this.asc = true;
             }
+        },
+
+        /**
+         * Sorts the unusedWords based on the selected column and current ascending/descending choice
+         * @returns {Array} The sorted word object array 
+         */
+        sortWords(words) {
+            let dirModifier = this.asc ? 1 : -1;
+            let result = words.sort((a,b) => {
+                switch (this.col) {
+                    case 0: return a.english[0] > b.english[0] ? (1*dirModifier) : (-1*dirModifier);
+                    case 1: return a.romazi[0] > b.romazi[0] ? (1*dirModifier) : (-1*dirModifier);
+                    case 2: return a.kana[0] > b.kana[0] ? (1*dirModifier) : (-1*dirModifier);
+                    case 3: return a.japanese[0] > b.japanese[0] ? (1*dirModifier) : (-1*dirModifier);
+                    case 4: return compareLesson(a.lesson, b.lesson) ? (1*dirModifier) : (-1*dirModifier);
+                    default: return true;
+                }
+            });
+            return result;
+        },
+
+        renderable() {
+            let a = this.unusedWords.length > 0 && this.unusedWords[0].hasOwnProperty('romazi');
+            let b = this.reviewWords.length > 0 && this.reviewWords[0].hasOwnProperty('romazi');
+            let c = this.masteredWords.length > 0 && this.masteredWords[0].hasOwnProperty('romazi');
+            return a || b || c;
         }
     }
 
@@ -132,5 +147,11 @@ export default {
     }
     .downArrow::after {
         content: "\25be";
+    }
+    .mastered {
+        background-color: #a5d69d;
+    }
+    .review {
+        background-color: #fc6262;
     }
 </style>
