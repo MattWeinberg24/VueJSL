@@ -1,6 +1,6 @@
 # VueJSL
 
-### Hosted at https://mattweinberg.dev/VueJSL/
+# Development stopped in favor of creating a custom Anki deck utilizing community-made plugins
 
 A migration of [JSLBot](https://github.com/MattWeinberg24/JSLbot) to [Vue.js](https://github.com/vuejs/vue)
 
